@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大豐環保碳排效益計算機</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        /* --- 海報風格 BANNER 樣式 --- */
+        .header {
+            /* 模擬海報的柔和風格：使用 LOGO 藍色和綠色，保持柔和的圓潤效果 */
+            background: 
+                /* 藍色柔和色塊 (左上) - 參考 LOGO 藍色 */
+                radial-gradient(circle at 10% 20%, rgba(0, 148, 217, 0.8) 0%, rgba(0, 148, 217, 0) 50%),
+                /* 綠色柔和色塊 (右下) - 參考 LOGO 綠色 */
+                radial-gradient(circle at 90% 80%, rgba(119, 187, 65, 0.7) 0%, rgba(119, 187, 65, 0) 50%),
+                /* 主要的柔和基底色 (接近淺綠/米白色，保持計算機整體色調和柔和感) */
+                linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+            
+            /* 文字顏色與字體樣式保持不變 */
+            color: #2e7d32;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        /* 調整大標題樣式 (保持與海報風格一致) */
+        .header h1 {
+            font-size: 38px;
+            margin-bottom: 10px;
+            font-weight: 800;
+            color: #1b5e20;
+            text-shadow: 0px 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        /* 調整小標題樣式 (保持與海報風格一致) */
+        .header p {
+            font-size: 18px;
+            opacity: 0.85;
+            font-weight: 600;
+            color: #424242;
+        }
+        /* --- BANNER 樣式結束 --- */
+        
+        .main-content {
+            padding: 40px;
+        }
+        
+        .section {
+            background: #f9fafb;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #4caf50;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title::before {
+            content: "📊";
+            margin-right: 10px;
+            font-size: 24px;
+        }
+        
+        .input-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .input-field {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .input-field label {
+            font-weight: 600;
+            color: #424242;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .input-field input,
+        .input-field select {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .input-field input:focus,
+        .input-field select:focus {
+            outline: none;
+            border-color: #4caf50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+        
+        .input-field .unit {
+            font-size: 12px;
+            color: #757575;
+            margin-top: 5px;
+        }
+        
+        .comparison-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .scenario-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+        }
+        
+        .scenario-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .scenario-bad {
+            border: 3px solid #f44336;
+        }
+        
+        .scenario-good {
+            border: 3px solid #4caf50;
+        }
+        
+        .scenario-header {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .scenario-bad .scenario-header {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .scenario-good .scenario-header {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .calculation-item {
+            background: #fafafa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .calculation-label {
+            font-size: 13px;
+            color: #616161;
+            margin-bottom: 5px;
+        }
+        
+        .calculation-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #212121;
+        }
+        
+        .calculation-formula {
+            font-size: 11px;
+            color: #9e9e9e;
+            margin-top: 5px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .total-box {
+            background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 15px;
+        }
+        
+        .total-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .total-value {
+            font-size: 32px;
+            font-weight: bold;
+        }
+        
+        .savings-banner {
+            background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+        }
+
+        /* 新增一個給總效益 BANNER 的樣式，讓它顏色更深一點以示區別 */
+        .total-savings-banner {
+            background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 0 8px 25px rgba(27, 94, 32, 0.5);
+        }
+        
+        .savings-banner h2, .total-savings-banner h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .savings-value {
+            font-size: 56px;
+            font-weight: bold;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .savings-details {
+            /* 調整網格佈局，固定 3 欄 */
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px; 
+            margin-top: 30px;
+        }
+        
+        .savings-item {
+            background: rgba(255,255,255,0.2);
+            padding: 15px; 
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .savings-item-value {
+            font-size: 24px; 
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .savings-item-label {
+            font-size: 13px; 
+            opacity: 0.95;
+        }
+        
+        .recycle-material-section {
+            margin-top: 30px;
+        }
+        
+        .material-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .material-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .material-card:hover {
+            border-color: #4caf50;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+        }
+        
+        .material-card.active {
+            border-color: #4caf50;
+            background: #e8f5e9;
+        }
+        
+        .material-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+        
+        .material-comparison {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .material-stat {
+            text-align: center;
+        }
+        
+        .material-stat-label {
+            font-size: 12px;
+            color: #757575;
+        }
+        
+        .material-stat-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #212121;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .badge-certified {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .note-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        
+        .note-box h3 {
+            color: #e65100;
+            margin-bottom: 10px;
+        }
+        
+        .note-box ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+        
+        @media (max-width: 768px) {
+            .comparison-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .savings-value {
+                font-size: 42px;
+            }
+
+            /* 手機版將換算指標調整為兩欄 */
+            .savings-details {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body onload="calculate()">
+    <div class="container">
+        <div class="header">
+            <h1>🌱 大豐環保碳排效益計算機</h1>
+            <p>專業回收 × 低碳物流 × 再生材料 | 完整碳排放量對比分析</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="section">
+                <div class="section-title">基本資訊</div>
+                <div class="input-group">
+                    <div class="input-field">
+                        <label>回收品總重量</label>
+                        <input type="number" id="recycleWeight" value="100" min="0" step="0.1" oninput="calculate()">
+                        <span class="unit">單位：公斤 (kg)</span>
+                    </div>
+                    <div class="input-field">
+                        <label>客戶端至回收站距離</label>
+                        <input type="number" id="distanceToStation" value="100" min="0" step="1" oninput="calculate()">
+                        <span class="unit">單位：公里 (km)</span>
+                    </div>
+                    <div class="input-field">
+                        <label>回收站至處理廠距離</label>
+                        <input type="number" id="distanceToFactory" value="30" min="0" step="1" oninput="calculate()">
+                        <span class="unit">單位：公里 (km)</span>
+                    </div>
+                    <div class="input-field">
+                        <label>處理廠運輸方式</label>
+                        <select id="transportType" onchange="calculate()">
+                            <option value="daphone">大豐低碳物流 (ISO 14067認證)</option>
+                            <option value="diesel">一般柴油車清運</option>
+                        </select>
+                        <span class="unit">ISO 14067碳足跡認證</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">碳排放量對比分析</div>
+                
+                <div class="comparison-container">
+                    <div class="scenario-card scenario-bad">
+                        <div class="scenario-header">❌ 情境A：未妥善回收（焚化處理）</div>
+                        
+                        <div class="calculation-item">
+                            <div class="calculation-label">廢棄物焚化處理</div>
+                            <div class="calculation-value" id="incinerationEmission">36.0 kgCO₂e</div>
+                            <div class="calculation-formula">= 重量 × 360 (環境部焚化係數)</div>
+                        </div>
+                        
+                        <div class="total-box" style="background: linear-gradient(135deg, #d32f2f 0%, #f44336 100%);">
+                            <div class="total-label">總碳排放量</div>
+                            <div class="total-value" id="totalBad">36.0</div>
+                            <div style="font-size: 14px; margin-top: 5px;">kgCO₂e</div>
+                        </div>
+                    </div>
+                    
+                    <div class="scenario-card scenario-good">
+                        <div class="scenario-header">✅ 情境B：使用大豐環保服務</div>
+                        
+                        <div class="calculation-item">
+                            <div class="calculation-label">階段1：客戶端 → 回收站</div>
+                            <div class="calculation-value" id="stage1Emission">6.83 kgCO₂e</div>
+                            <div class="calculation-formula">= 重量 × 距離 × 0.683 (小貨車係數)</div>
+                        </div>
+                        
+                        <div class="calculation-item">
+                            <div class="calculation-label">階段2：回收站 → 處理廠</div>
+                            <div class="calculation-value" id="stage2Emission">3.93 kgCO₂e</div>
+                            <div class="calculation-formula" id="stage2Formula">= 重量 × 距離 × 係數</div>
+                        </div>
+                        
+                        <div class="total-box">
+                            <div class="total-label">總碳排放量</div>
+                            <div class="total-value" id="totalGood">10.76</div>
+                            <div style="font-size: 14px; margin-top: 5px;">kgCO₂e</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="savings-banner">
+                <h2>🎉 回收運輸減碳效益換算</h2>
+                <div style="font-size: 18px; opacity: 0.95;">總減少碳排放量（運輸階段）</div>
+                <div class="savings-value" id="totalSavings">25.24</div>
+                <div style="font-size: 20px;">kgCO₂e</div>
+                <div style="font-size: 16px; margin-top: 10px; opacity: 0.9;">
+                    減碳比例：<span id="savingsPercent" style="font-size: 24px; font-weight: bold;">70.1%</span>
+                </div>
+                
+                <div class="savings-details">
+                    <div class="savings-item">
+                        <div class="savings-item-value" id="carKm">101</div>
+                        <div class="savings-item-label">相當於汽車行駛公里數</div>
+                    </div>
+                    <div class="savings-item">
+                        <div class="savings-item-value" id="trees">3</div>
+                        <div class="savings-item-label">相當於種植樹木（棵）</div>
+                    </div>
+                    <div class="savings-item">
+                        <div class="savings-item-value" id="electricity">46</div>
+                        <div class="savings-item-label">相當於家庭用電（度）</div>
+                    </div>
+                    <div class="savings-item">
+                        <div class="savings-item-value" id="airConHours">0</div>
+                        <div class="savings-item-label">冷氣可開時數 (hr)</div>
+                    </div>
+                    <div class="savings-item">
+                        <div class="savings-item-value" id="phoneChargeTimes">0</div>
+                        <div class="savings-item-label">手機完整充電 (次)</div>
+                    </div>
+                    <div class="savings-item">
+                        <div class="savings-item-value" id="chatGptQuestions">0</div>
+                        <div class="savings-item-label">AI聊天機器人提問 (次)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section recycle-material-section">
+                <div class="section-title">再生材料減碳優勢（TÜV認證）</div>
+                <p style="color: #616161; margin-bottom: 20px;">
+                    大豐環保的 rHDPE 及 rPP 再生材料已獲得 TÜV 碳足跡認證，相較新料可有效降低 <strong style="color: #2e7d32;">75% 碳排放</strong>
+                </p>
+                
+                <div class="material-cards">
+                    <div class="material-card active">
+                        <div class="material-name">♻️ rHDPE（再生高密度聚乙烯）</div>
+                        <div class="input-field">
+                            <label>使用rHDPE重量</label>
+                            <input type="number" id="rhdpeWeight" value="0" min="0" step="0.1" oninput="calculate()">
+                            <span class="unit">單位：公斤 (kg)</span>
+                        </div>
+                        <div class="material-comparison">
+                            <div class="material-stat">
+                                <div class="material-stat-label">新料HDPE碳排</div>
+                                <div class="material-stat-value" id="hdpeVirgin">0.00</div>
+                                <div style="font-size: 10px; color: #757575;">kgCO₂e</div>
+                            </div>
+                            <div class="material-stat">
+                                <div class="material-stat-label">rHDPE碳排</div>
+                                <div class="material-stat-value" id="hdpeRecycle">0.00</div>
+                                <div style="font-size: 10px; color: #757575;">kgCO₂e</div>
+                            </div>
+                            <div class="material-stat">
+                                <div class="material-stat-label" style="color: #4caf50;">減少碳排</div>
+                                <div class="material-stat-value" style="color: #4caf50;" id="hdpeSavings">0.00</div>
+                                <div style="font-size: 10px; color: #4caf50;">kgCO₂e</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px; font-size: 12px; color: #616161;">
+                            計算公式：新料 2.21 kgCO₂e/kg，再生料減碳 75%
+                        </div>
+                        <span class="badge badge-certified">✓ TÜV碳足跡認證</span>
+                    </div>
+                    
+                    <div class="material-card active">
+                        <div class="material-name">♻️ rPP（再生聚丙烯）</div>
+                        <div class="input-field">
+                            <label>使用rPP重量</label>
+                            <input type="number" id="rppWeight" value="0" min="0" step="0.1" oninput="calculate()">
+                            <span class="unit">單位：公斤 (kg)</span>
+                        </div>
+                        <div class="material-comparison">
+                            <div class="material-stat">
+                                <div class="material-stat-label">新料PP碳排</div>
+                                <div class="material-stat-value" id="ppVirgin">0.00</div>
+                                <div style="font-size: 10px; color: #757575;">kgCO₂e</div>
+                            </div>
+                            <div class="material-stat">
+                                <div class="material-stat-label">rPP碳排</div>
+                                <div class="material-stat-value" id="ppRecycle">0.00</div>
+                                <div style="font-size: 10px; color: #757575;">kgCO₂e</div>
+                            </div>
+                            <div class="material-stat">
+                                <div class="material-stat-label" style="color: #4caf50;">減少碳排</div>
+                                <div class="material-stat-value" style="color: #4caf50;" id="ppSavings">0.00</div>
+                                <div style="font-size: 10px; color: #4caf50;">kgCO₂e</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px; font-size: 12px; color: #616161;">
+                            計算公式：新料 1.95 kgCO₂e/kg，再生料減碳 75%
+                        </div>
+                        <span class="badge badge-certified">✓ TÜV碳足跡認證</span>
+                    </div>
+                </div>
+                
+                <div style="background: #e8f5e9; padding: 25px; border-radius: 12px; margin-top: 25px; text-align: center;">
+                    <div style="font-size: 16px; color: #2e7d32; margin-bottom: 10px;">使用再生材料額外減碳</div>
+                    <div style="font-size: 42px; font-weight: bold; color: #1b5e20;" id="materialTotalSavings">0.00</div>
+                    <div style="font-size: 16px; color: #2e7d32;">kgCO₂e</div>
+                </div>
+            </div>
+            
+            <div class="section" style="background: linear-gradient(135deg, #f5f5f5 0%, #e8f5e9 100%); border: 3px solid #4caf50;">
+                <div class="section-title">💡 完整減碳效益總結</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                    <div style="background: white; padding: 20px; border-radius: 10px; text-align: center;">
+                        <div style="color: #757575; font-size: 14px; margin-bottom: 5px;">回收運輸減碳</div>
+                        <div style="font-size: 32px; font-weight: bold; color: #1976d2;" id="transportSavings">25.24</div>
+                        <div style="color: #757575; font-size: 12px;">kgCO₂e</div>
+                    </div>
+                    <div style="background: white; padding: 20px; border-radius: 10px; text-align: center;">
+                        <div style="color: #757575; font-size: 14px; margin-bottom: 5px;">再生材料減碳</div>
+                        <div style="font-size: 32px; font-weight: bold; color: #2e7d32;" id="materialSavings">0.00</div>
+                        <div style="color: #757575; font-size: 12px;">kgCO₂e</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%); padding: 20px; border-radius: 10px; text-align: center; color: white;">
+                        <div style="font-size: 14px; margin-bottom: 5px; opacity: 0.95;">總減碳量</div>
+                        <div style="font-size: 36px; font-weight: bold;" id="grandTotalSavings">25.24</div>
+                        <div style="font-size: 12px; opacity: 0.95;">kgCO₂e</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="total-savings-banner">
+                <h2>🌍 總減碳效益換算 (運輸 + 材料)</h2>
+                <div style="font-size: 18px; opacity: 0.95;">完整總減少碳排放量</div>
+                <div class="savings-value" id="grandTotalSavingsValue">25.24</div>
+                <div style="font-size: 20px;">kgCO₂e</div>
+                
+                <div class="savings-details">
+                    <div class="savings-item">
+                        <div class="savings-item-value" id="totalCarKm">101</div>
+                        <div class="savings-item-label">相當於汽車行駛公里數</div>
+                    </div>
+                    <div class="savings-item">
+                        <div class="savings-item-value" id="totalTrees">3</div>
+                        <div class="savings-item-label">相當於種植樹木（棵）</div>
+                    </div>
+                    <div class="savings-item">
+                        <div class="savings-item-value" id="totalElectricity">46</div>
+                        <div class="savings-item-label">相當於家庭用電（度）</div>
+                    </div>
+                    <div class="savings-item">
+                        <div class="savings-item-value" id="totalAirConHours">0</div>
+                        <div class="savings-item-label">冷氣可開時數 (hr)</div>
+                    </div>
+                    <div class="savings-item">
+                        <div class="savings-item-value" id="totalPhoneChargeTimes">0</div>
+                        <div class="savings-item-label">手機完整充電 (次)</div>
+                    </div>
+                    <div class="savings-item">
+                        <div class="savings-item-value" id="totalChatGptQuestions">0</div>
+                        <div class="savings-item-label">AI聊天機器人提問 (次)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="note-box">
+                <h3>📌 計算說明</h3>
+                <ul>
+                    <li><strong>焚化處理係數：</strong>360 kgCO₂e/噸（環境部廢棄物焚化處理服務係數）</li>
+                    <li><strong>小貨車運輸係數：</strong>0.683 kgCO₂e/噸·公里（環境部營業用小貨車汽油）</li>
+                    <li><strong>大豐低碳物流係數：</strong>1.31 kgCO₂e/噸·公里（ISO 14067碳足跡認證）</li>
+                    <li><strong>一般柴油車係數：</strong>1.31 kgCO₂e/噸·公里（一般柴油動力車）</li>
+                    <li><strong>新料HDPE碳排：</strong>2.21 kgCO₂e/kg（產品碳足跡資訊網）</li>
+                    <li><strong>新料PP碳排：</strong>1.95 kgCO₂e/kg（產品碳足跡資訊網）</li>
+                    <li><strong>再生料減碳：</strong>75%（TÜV碳足跡認證）- rHDPE碳排 = 2.21 × 25% = 0.5525 kgCO₂e/kg，rPP碳排 = 1.95 × 25% = 0.4875 kgCO₂e/kg</li>
+                    <li><strong>汽車行駛公里數換算：</strong>減碳量 ÷ 0.25 (kgCO₂e/km 汽車行駛因子)</li>
+                    <li><strong>種植樹木換算：</strong>減碳量 ÷ 16.8 (kgCO₂e/棵/年 樹木固碳因子)</li>
+                    <li><strong>家庭用電換算：</strong>減碳量 ÷ 0.509 (kgCO₂e/度 電力碳排放因子)</li>
+                    <li><strong>冷氣時數換算：</strong>減碳量 ÷ (0.9 kW 冷氣功率 × 0.509 碳排放因子)</li>
+                    <li><strong>手機充電換算：</strong>減碳量 ÷ (0.011 kWh/次 手機充電量 × 0.509 碳排放因子)</li>
+                    <li><strong>AI聊天機器人提問換算：</strong>減碳量 ÷ 0.01 kgCO₂e/題</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 係數定義
+        const COEFFICIENTS = {
+            incineration: 360,           // 焚化處理 kgCO₂e/噸
+            smallTruck: 0.683,           // 小貨車 kgCO₂e/噸·公里
+            daphoneLowCarbon: 1.31,      // 大豐低碳物流 kgCO₂e/噸·公里
+            diesel: 1.31,                // 一般柴油車 kgCO₂e/噸·公里
+            hdpeVirgin: 2.21,            // 新料HDPE kgCO₂e/kg
+            ppVirgin: 1.95,              // 新料PP kgCO₂e/kg
+            recycleReduction: 0.75,      // 再生料減碳比例 75%
+            carFactor: 0.25,             // 汽車行駛公里數轉換因子 (gCO₂e/km) - 假設值 250g/km = 0.25kg/km
+            treeFactor: 16.8,            // 種植樹木轉換因子 (kgCO₂e/棵/年) - 假設值 16.8kg/年
+            electricityFactor: 0.509,    // 家庭用電轉換因子 (kgCO₂e/度) - 假設值 0.509kg/度
+
+            // 換算指標係數
+            airConPower: 0.9,            // 冷氣功率 (kW)
+            phoneChargeEnergy: 0.011,    // 手機完整充電能耗 (kWh)
+            chatGptEmission: 0.01        // ChatGPT 每個問題碳排 (kgCO₂e/題)
+        };
+        
+        function calculate() {
+            // 獲取輸入值
+            const weight = parseFloat(document.getElementById('recycleWeight').value) || 0; // kg
+            const distToStation = parseFloat(document.getElementById('distanceToStation').value) || 0; // km
+            const distToFactory = parseFloat(document.getElementById('distanceToFactory').value) || 0; // km
+            const transportType = document.getElementById('transportType').value;
+            const rhdpeWeight = parseFloat(document.getElementById('rhdpeWeight').value) || 0; // kg
+            const rppWeight = parseFloat(document.getElementById('rppWeight').value) || 0; // kg
+            
+            // ========== 情境A：焚化處理 (總碳排) ==========
+            // 係數是 kgCO₂e/噸, 故重量要除以 1000 轉換成噸
+            const incinerationEmission = (weight / 1000) * COEFFICIENTS.incineration;
+            const totalBad = incinerationEmission;
+
+            // ========== 情境B：使用大豐服務 (總碳排) ==========
+            // 階段1：客戶端到回收站 (小貨車)
+            // 係數是 kgCO₂e/噸·公里
+            const stage1 = (weight / 1000) * distToStation * COEFFICIENTS.smallTruck;
+            
+            // 階段2：回收站到處理廠 (低碳/柴油車)
+            const transportCoef = transportType === 'daphone' ? COEFFICIENTS.daphoneLowCarbon : COEFFICIENTS.diesel;
+            const stage2 = (weight / 1000) * distToFactory * transportCoef;
+            
+            const totalGood = stage1 + stage2;
+            
+            // ========== 減碳效益 (回收運輸) ==========
+            const transportSavings = totalBad - totalGood;
+            const savingsPercent = totalBad > 0 ? (transportSavings / totalBad * 100) : 0;
+            
+            // ========== 再生材料減碳計算 ==========
+            const reductionFactor = (1 - COEFFICIENTS.recycleReduction); // 25%
+
+            // rHDPE計算
+            const hdpeVirginEmission = rhdpeWeight * COEFFICIENTS.hdpeVirgin;
+            const hdpeRecycleEmission = hdpeVirginEmission * reductionFactor;
+            const hdpeSavings = hdpeVirginEmission - hdpeRecycleEmission;
+            
+            // rPP計算
+            const ppVirginEmission = rppWeight * COEFFICIENTS.ppVirgin;
+            const ppRecycleEmission = ppVirginEmission * reductionFactor;
+            const ppSavings = ppVirginEmission - ppRecycleEmission;
+            
+            // 再生材料總減碳
+            const totalMaterialSavings = hdpeSavings + ppSavings;
+
+            // 總減碳 (運輸 + 材料)
+            const grandTotalSavings = transportSavings + totalMaterialSavings;
+            
+            // ========== 換算指標 (僅使用運輸減碳量) ==========
+            const savings = transportSavings; 
+            
+            const carKm = savings / COEFFICIENTS.carFactor; 
+            const trees = savings / COEFFICIENTS.treeFactor; 
+            const electricity = savings / COEFFICIENTS.electricityFactor; 
+            const airConHours = savings / (COEFFICIENTS.airConPower * COEFFICIENTS.electricityFactor);
+            const phoneChargeTimes = savings / (COEFFICIENTS.phoneChargeEnergy * COEFFICIENTS.electricityFactor);
+            const chatGptQuestions = savings / COEFFICIENTS.chatGptEmission;
+
+            // ========== 換算指標 (使用總減碳量) ==========
+            const totalSavingsAmount = grandTotalSavings; 
+            
+            const totalCarKm = totalSavingsAmount / COEFFICIENTS.carFactor; 
+            const totalTrees = totalSavingsAmount / COEFFICIENTS.treeFactor; 
+            const totalElectricity = totalSavingsAmount / COEFFICIENTS.electricityFactor; 
+            const totalAirConHours = totalSavingsAmount / (COEFFICIENTS.airConPower * COEFFICIENTS.electricityFactor);
+            const totalPhoneChargeTimes = totalSavingsAmount / (COEFFICIENTS.phoneChargeEnergy * COEFFICIENTS.electricityFactor);
+            const totalChatGptQuestions = totalSavingsAmount / COEFFICIENTS.chatGptEmission;
+
+            // ========== 更新頁面顯示 (將計算結果格式化為小數點後兩位) ==========
+            
+            // 碳排對比 (情境A)
+            document.getElementById('incinerationEmission').textContent = incinerationEmission.toFixed(2) + ' kgCO₂e';
+            document.getElementById('totalBad').textContent = totalBad.toFixed(2);
+            
+            // 碳排對比 (情境B)
+            document.getElementById('stage1Emission').textContent = stage1.toFixed(2) + ' kgCO₂e';
+            document.getElementById('stage2Emission').textContent = stage2.toFixed(2) + ' kgCO₂e';
+            document.getElementById('stage2Formula').textContent = `= (${weight} / 1000) × ${distToFactory} × ${transportCoef.toFixed(3)} (${transportType === 'daphone' ? '低碳物流' : '柴油車'}係數)`;
+            document.getElementById('totalGood').textContent = totalGood.toFixed(2);
+            
+            // 運輸減碳效益
+            document.getElementById('totalSavings').textContent = transportSavings.toFixed(2);
+            document.getElementById('savingsPercent').textContent = savingsPercent.toFixed(1) + '%';
+            
+            // 運輸減碳換算指標
+            document.getElementById('carKm').textContent = carKm.toFixed(0);
+            document.getElementById('trees').textContent = trees.toFixed(1);
+            document.getElementById('electricity').textContent = electricity.toFixed(0);
+            document.getElementById('airConHours').textContent = airConHours.toFixed(1);
+            document.getElementById('phoneChargeTimes').textContent = phoneChargeTimes.toFixed(0);
+            document.getElementById('chatGptQuestions').textContent = chatGptQuestions.toFixed(0);
+            
+            // 再生材料減碳優勢
+            document.getElementById('hdpeVirgin').textContent = hdpeVirginEmission.toFixed(2);
+            document.getElementById('hdpeRecycle').textContent = hdpeRecycleEmission.toFixed(2);
+            document.getElementById('hdpeSavings').textContent = hdpeSavings.toFixed(2);
+            
+            document.getElementById('ppVirgin').textContent = ppVirginEmission.toFixed(2);
+            document.getElementById('ppRecycle').textContent = ppRecycleEmission.toFixed(2);
+            document.getElementById('ppSavings').textContent = ppSavings.toFixed(2);
+            
+            document.getElementById('materialTotalSavings').textContent = totalMaterialSavings.toFixed(2);
+            
+            // 完整減碳效益總結
+            document.getElementById('transportSavings').textContent = transportSavings.toFixed(2);
+            document.getElementById('materialSavings').textContent = totalMaterialSavings.toFixed(2);
+            document.getElementById('grandTotalSavings').textContent = grandTotalSavings.toFixed(2);
+
+            // 總減碳效益換算 (新區塊)
+            document.getElementById('grandTotalSavingsValue').textContent = grandTotalSavings.toFixed(2);
+            document.getElementById('totalCarKm').textContent = totalCarKm.toFixed(0);
+            document.getElementById('totalTrees').textContent = totalTrees.toFixed(1);
+            document.getElementById('totalElectricity').textContent = totalElectricity.toFixed(0);
+            document.getElementById('totalAirConHours').textContent = totalAirConHours.toFixed(1);
+            document.getElementById('totalPhoneChargeTimes').textContent = totalPhoneChargeTimes.toFixed(0);
+            document.getElementById('totalChatGptQuestions').textContent = totalChatGptQuestions.toFixed(0);
+        }
+        
+        // 頁面載入後立即執行一次計算，顯示預設值
+        window.onload = calculate;
+    </script>
+</body>
+</html>
